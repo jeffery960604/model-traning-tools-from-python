@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GGUF Finetuning</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>GGUF Model Finetuning</h1>
+    
+    <form id="uploadForm">
+        <h3>Upload Model (.gguf)</h3>
+        <input type="file" name="model" accept=".gguf" required>
+        
+        <h3>Upload Training Data (.jsonl)</h3>
+        <input type="file" name="data" accept=".jsonl" required>
+        
+        <h3>Training Parameters</h3>
+        <label>Epochs: <input type="number" name="epochs" value="3" min="1"></label>
+        <label>Learning Rate: <input type="number" name="lr" value="0.0001" step="0.0001"></label>
+        
+        <button type="button" onclick="startTraining()">Start Finetuning</button>
+    </form>
+
+    <div id="progress"></div>
+
+    <script>
+        function startTraining() {
+            const formData = new FormData(document.getElementById('uploadForm'));
+            
+            axios.post('/upload', formData, {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then(response => {
+                monitorProgress();
+            });
+        }
+
+        function monitorProgress() {
+            const interval = setInterval(() => {
+                axios.get('/progress').then(response => {
+                    document.getElementById('progress').innerHTML = `
+                        Progress: ${response.data.progress}%<br>
+                        Status: ${response.data.status}
+                    `;
+                    
+                    if (response.data.progress >= 100) {
+                        clearInterval(interval);
+                    }
+                });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

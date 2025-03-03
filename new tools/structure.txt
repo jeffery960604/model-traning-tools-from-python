@@ -1,0 +1,11 @@
+# 项目结构
+gguf-finetune-web/
+├── web_ui/
+│   ├── templates/
+│   │   └── index.html
+│   └── app.py
+├── finetune/
+│   ├── dependency_checker.py
+│   └── finetune_gguf.py
+├── install_dependencies.sh
+└── requirements.txt
